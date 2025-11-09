@@ -135,7 +135,7 @@
                     expenses: expenses
                 };
 
-                fetch("{{ route('goalplanner.calculate') }}", {
+                fetch("{{ route('goalplanner.calculate', [], true) }}", {
                         method: "POST",
                         headers: {
                             'Content-Type': 'application/json',
