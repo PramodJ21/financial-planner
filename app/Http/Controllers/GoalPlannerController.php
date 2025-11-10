@@ -78,8 +78,22 @@ class GoalPlannerController extends Controller
         if ($monthlySavings >= $totalSIP8) {
             $recommendations['status'] = 'sufficient';
             $recommendations['message'] = '✅ Your savings are sufficient to meet all goals as planned.';
-        }
+        } else if ($monthlySavings <= 0) {
+            $recommendations = [
+                'status' => 'negative',
+                'message' => '❌ Your expenses exceed your income. Please review your spending before planning investments.',
+            ];
+            Session::put('planner_result', [
+                'totalGoals' => round(array_sum(array_column($goals, 'amount'))),
+                'totalExpenses' => round($totalMonthlyExpenses),
+                'yearlyToMonthly' => round($yearlyToMonthly),
+                'monthlySavings' => round($monthlySavings),
+                'goalSIPs' => [],
+                'recommendations' => $recommendations,
+            ]);
 
+            return response()->json(['redirect' => route('goalplanner.result')]);
+        }
         // ========================= CASE 2 & 3: Not enough funds =========================
         else {
             $recommendations['status'] = 'insufficient';
